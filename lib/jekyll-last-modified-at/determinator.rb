@@ -24,22 +24,11 @@ module Jekyll
         Time.at(last_modified_at_unix.to_i)
       end
 
+      # update by @queirozfcom
+      # even if source is versioned by git,
+      # use the stat command to get the date
       def last_modified_at_unix
-        if is_git_repo?(site_source)
-          last_commit_date = Executor.sh(
-            'git',
-            '--git-dir',
-            top_level_git_directory,
-            'log',
-            '--format="%ct"',
-            '--',
-            relative_path_from_git_dir
-          )[/\d+/]
-          # last_commit_date can be nil iff the file was not committed.
-          (last_commit_date.nil? || last_commit_date.empty?) ? mtime(absolute_path_to_article) : last_commit_date
-        else
-          mtime(absolute_path_to_article)
-        end
+        mtime(absolute_path_to_article)
       end
 
       def to_s
